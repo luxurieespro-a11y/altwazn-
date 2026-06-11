@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>منصة التوازن المالي Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070E;--bg2:#0D0D1A;--bg3:#121220;--bg4:#181826;--bg5:#1E1E2E;--bg6:#252538;
+  --border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.1);
+  --text:#E8E6F0;--text2:#9A98B0;--text3:#5A586A;
+  --gold:#C9A84C;--gold-l:#E8C97A;--gold-bg:rgba(201,168,76,.1);--gold-border:rgba(201,168,76,.25);
+  --green:#3DD68C;--green-bg:rgba(61,214,140,.1);--green-border:rgba(61,214,140,.2);
+  --red:#F06B6B;--red-bg:rgba(240,107,107,.1);--red-border:rgba(240,107,107,.2);
+  --blue:#5B9CF6;--blue-bg:rgba(91,156,246,.1);--blue-border:rgba(91,156,246,.2);
+  --purple:#A78BFA;--purple-bg:rgba(167,139,250,.1);--purple-border:rgba(167,139,250,.2);
+  --orange:#FB923C;--orange-bg:rgba(251,146,60,.1);--orange-border:rgba(251,146,60,.2);
+  --teal:#2DD4BF;--teal-bg:rgba(45,212,191,.1);
+  --r:12px;--r-lg:16px;--r-xl:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Cairo','Tajawal',sans-serif;background:var(--bg);color:var(--text);font-size:14px;}
+
+/* ─── LAYOUT ─── */
+.app{display:flex;height:100vh;}
+.sidebar{width:220px;min-width:220px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;transition:width .25s;overflow:hidden;}
+.sidebar.sm{width:52px;min-width:52px;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;gap:12px;}
+.workspace{flex:1;overflow-y:auto;padding:24px;background:var(--bg);}
+
+/* ─── SIDEBAR ─── */
+.sb-brand{display:flex;align-items:center;gap:10px;padding:14px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.brand-mark{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#C9A84C,#7A5910);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;}
+.brand-text{font-family:'Tajawal';font-weight:900;font-size:.88rem;line-height:1.2;white-space:nowrap;overflow:hidden;}
+.brand-text small{display:block;font-size:.6rem;font-weight:600;color:var(--gold);letter-spacing:2px;}
+.sidebar.sm .brand-text{display:none;}
+.sb-scroll{flex:1;overflow-y:auto;padding:8px;overflow-x:hidden;}
+.sb-scroll::-webkit-scrollbar{width:3px;}
+.sb-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+.sb-group{margin-bottom:4px;}
+.sb-label{font-size:.6rem;font-weight:700;color:var(--text3);letter-spacing:2px;padding:10px 8px 4px;white-space:nowrap;overflow:hidden;}
+.sidebar.sm .sb-label{visibility:hidden;}
+.nav-btn{display:flex;align-items:center;gap:9px;padding:9px 8px;border-radius:9px;cursor:pointer;color:var(--text2);font-size:.82rem;font-weight:600;transition:all .15s;white-space:nowrap;width:100%;border:none;background:none;text-align:right;}
+.nav-btn .ico{font-size:1rem;flex-shrink:0;width:18px;text-align:center;}
+.nav-btn:hover{background:var(--bg5);color:var(--text);}
+.nav-btn.active{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-border);}
+.sidebar.sm .nav-btn span{display:none;}
+.sb-bottom{padding:10px;border-top:1px solid var(--border);}
+.collapse-btn{width:100%;background:none;border:none;color:var(--text3);cursor:pointer;padding:8px;border-radius:8px;font-size:.8rem;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.collapse-btn:hover{background:var(--bg5);color:var(--text2);}
+.sidebar.sm .collapse-btn span{display:none;}
+
+/* ─── TOPBAR ─── */
+.tb-left{display:flex;align-items:center;gap:12px;min-width:0;}
+.page-title{font-family:'Tajawal';font-weight:800;font-size:1rem;white-space:nowrap;}
+.tb-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.tb-badge{font-size:.72rem;padding:4px 10px;border-radius:20px;font-weight:700;background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);cursor:pointer;transition:all .2s;}
+.tb-badge:hover{background:var(--red-border);}
+select.cur-sel{background:var(--bg4);border:1px solid var(--gold-border);color:var(--gold);font-family:'Cairo';font-size:.78rem;font-weight:700;padding:7px 11px;border-radius:9px;outline:none;cursor:pointer;}
+select.cur-sel option{background:var(--bg3);}
+.tb-btn{background:var(--bg4);border:1px solid var(--border2);color:var(--text2);padding:7px 13px;border-radius:9px;cursor:pointer;font-family:'Cairo';font-size:.78rem;font-weight:600;display:flex;align-items:center;gap:5px;transition:all .2s;white-space:nowrap;}
+.tb-btn:hover{border-color:var(--gold-border);color:var(--gold);}
+
+/* ─── SHEETS ─── */
+.sheet{display:none;animation:fadeUp .25s ease;}
+.sheet.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ─── SECTION HEADER ─── */
+.sh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap;}
+.sh-title{font-family:'Tajawal';font-size:1.45rem;font-weight:900;line-height:1.2;}
+.sh-title em{font-style:normal;color:var(--gold);}
+.sh-sub{font-size:.76rem;color:var(--text2);margin-top:4px;}
+
+/* ─── KPI CARDS ─── */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px;}
+.kpi{background:var(--bg3);border-radius:var(--r);padding:18px;border:1px solid var(--border);transition:transform .2s;position:relative;overflow:hidden;}
+.kpi:hover{transform:translateY(-2px);}
+.kpi-label{font-size:.7rem;color:var(--text2);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.kpi-val{font-family:'Tajawal';font-size:1.55rem;font-weight:900;}
+.kpi-sub{font-size:.7rem;margin-top:5px;font-weight:600;}
+.kpi.g .kpi-val{color:var(--green);} .kpi.r .kpi-val{color:var(--red);}
+.kpi.au .kpi-val{color:var(--gold);} .kpi.b .kpi-val{color:var(--blue);}
+.kpi.o .kpi-val{color:var(--orange);} .kpi.p .kpi-val{color:var(--purple);}
+.kpi.t .kpi-val{color:var(--teal);}
+.kpi-glow{position:absolute;top:-30px;right:-30px;width:80px;height:80px;border-radius:50%;opacity:.05;}
+.kpi.g .kpi-glow{background:var(--green);} .kpi.r .kpi-glow{background:var(--red);}
+.kpi.au .kpi-glow{background:var(--gold);} .kpi.b .kpi-glow{background:var(--blue);}
+.kpi.o .kpi-glow{background:var(--orange);} .kpi.p .kpi-glow{background:var(--purple);}
+
+/* ─── PANELS ─── */
+.grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:16px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+.panel{background:var(--bg3);border-radius:var(--r);padding:20px;border:1px solid var(--border);}
+.panel-head{font-family:'Tajawal';font-size:.95rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.badge{font-size:.65rem;padding:2px 8px;border-radius:20px;font-weight:700;}
+.badge.gold{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-border);}
+.badge.green{background:var(--green-bg);color:var(--green);}
+.badge.red{background:var(--red-bg);color:var(--red);}
+.badge.blue{background:var(--blue-bg);color:var(--blue);}
+.badge.orange{background:var(--orange-bg);color:var(--orange);}
+
+/* ─── RULE BARS ─── */
+.rule{margin-bottom:14px;}
+.rule-head{display:flex;justify-content:space-between;align-items:center;font-size:.79rem;margin-bottom:6px;}
+.track{height:7px;border-radius:50px;background:rgba(255,255,255,.05);overflow:hidden;}
+.fill{height:100%;border-radius:50px;transition:width .8s cubic-bezier(.34,1.56,.64,1);}
+.fill-blue{background:linear-gradient(90deg,var(--blue),#89C4FF);}
+.fill-purple{background:linear-gradient(90deg,var(--purple),#C4B5FD);}
+.fill-gold{background:linear-gradient(90deg,var(--gold),var(--gold-l));}
+.fill-green{background:linear-gradient(90deg,var(--green),#7EF5C5);}
+.fill-orange{background:linear-gradient(90deg,var(--orange),#FCA57A);}
+.rule-foot{display:flex;justify-content:space-between;font-size:.68rem;color:var(--text2);margin-top:3px;}
+
+/* ─── DONUT ─── */
+.donut-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.leg{flex:1;min-width:110px;}
+.leg-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:.78rem;border-bottom:1px solid var(--border);}
+.leg-row:last-child{border:none;}
+.leg-left{display:flex;align-items:center;gap:8px;}
+.leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+
+/* ─── TABLE ─── */
+.table-box{background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:16px;}
+.table-toolbar{padding:14px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;}
+input,select{background:var(--bg5);border:1px solid var(--border2);color:var(--text);font-family:'Cairo';font-size:.82rem;padding:9px 12px;border-radius:9px;outline:none;transition:border-color .2s;}
+input:focus,select:focus{border-color:var(--gold-border);}
+input::placeholder{color:var(--text3);}
+select option{background:var(--bg3);}
+.f-desc{flex:3;min-width:130px;} .f-amt{flex:1;min-width:85px;} .f-date{flex:1;min-width:120px;} .f-cat{flex:1;min-width:110px;} .f-month{flex:1;min-width:100px;}
+.btn{padding:9px 16px;border-radius:9px;font-family:'Cairo';font-weight:700;font-size:.8rem;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#9A7010);color:#000;}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(201,168,76,.3);}
+.btn-ghost{background:var(--bg5);border:1px solid var(--border2);color:var(--text2);}
+.btn-ghost:hover{border-color:var(--gold-border);color:var(--gold);}
+.btn-sm{padding:6px 12px;font-size:.75rem;}
+.btn-danger{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);}
+table{width:100%;border-collapse:collapse;}
+thead th{background:var(--bg4);color:var(--text2);font-size:.7rem;font-weight:700;padding:11px 13px;text-align:right;border-bottom:1px solid var(--border);}
+tbody td{padding:12px 13px;font-size:.81rem;border-bottom:1px solid var(--border);}
+tbody tr:last-child td{border:none;}
+tbody tr{transition:background .12s;}
+tbody tr:hover{background:rgba(255,255,255,.013);}
+.pill{padding:2px 10px;border-radius:20px;font-size:.69rem;font-weight:700;}
+.pill.income{background:var(--green-bg);color:var(--green);}
+.pill.needs{background:var(--blue-bg);color:var(--blue);}
+.pill.wants{background:var(--purple-bg);color:var(--purple);}
+.pill.savings{background:var(--gold-bg);color:var(--gold);}
+.pill.debt{background:var(--orange-bg);color:var(--orange);}
+.apos{color:var(--green);font-weight:700;font-family:'Tajawal';}
+.aneg{color:var(--red);font-weight:700;font-family:'Tajawal';}
+.agold{color:var(--gold);font-weight:700;font-family:'Tajawal';}
+.del-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .2s;font-size:.82rem;}
+.del-btn:hover{background:var(--red-bg);color:var(--red);}
+.empty-td{text-align:center;padding:36px;color:var(--text3);}
+
+/* ─── AI CHAT ─── */
+.ai-layout{display:grid;grid-template-columns:1fr 320px;gap:16px;height:calc(100vh - 160px);}
+.ai-chat{display:flex;flex-direction:column;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.chat-msgs::-webkit-scrollbar{width:4px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+.msg{max-width:85%;padding:11px 14px;border-radius:12px;font-size:.82rem;line-height:1.6;}
+.msg.user{background:var(--gold-bg);border:1px solid var(--gold-border);align-self:flex-start;color:var(--text);}
+.msg.ai{background:var(--bg5);border:1px solid var(--border2);align-self:flex-end;color:var(--text);}
+.msg.ai .msg-label{font-size:.65rem;color:var(--blue);font-weight:700;margin-bottom:6px;}
+.chat-input-row{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;}
+.chat-input-row input{flex:1;}
+.ai-panel{display:flex;flex-direction:column;gap:14px;overflow-y:auto;}
+.ai-panel::-webkit-scrollbar{width:4px;}
+.ai-panel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+.ai-insight{background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);padding:16px;}
+.ai-insight h4{font-size:.8rem;font-weight:700;margin-bottom:10px;color:var(--text2);}
+.quick-btn{width:100%;background:var(--bg5);border:1px solid var(--border2);color:var(--text2);padding:9px 12px;border-radius:9px;cursor:pointer;font-family:'Cairo';font-size:.78rem;text-align:right;transition:all .2s;margin-bottom:6px;display:block;}
+.quick-btn:hover{border-color:var(--gold-border);color:var(--gold);}
+.loading-dots{display:inline-flex;gap:4px;align-items:center;}
+.loading-dots span{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:dot 1.2s infinite;}
+.loading-dots span:nth-child(2){animation-delay:.2s;}
+.loading-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes dot{0%,80%,100%{opacity:.3;transform:scale(.8);}40%{opacity:1;transform:scale(1);}}
+
+/* ─── MARKETS ─── */
+.markets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:16px;}
+.mkt-card{background:var(--bg3);border-radius:var(--r);padding:16px;border:1px solid var(--border);transition:all .2s;}
+.mkt-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.mkt-name{font-size:.72rem;color:var(--text2);font-weight:700;margin-bottom:8px;}
+.mkt-val{font-family:'Tajawal';font-size:1.3rem;font-weight:800;}
+.mkt-chg{font-size:.73rem;font-weight:700;margin-top:4px;}
+.mkt-chg.up{color:var(--green);} .mkt-chg.dn{color:var(--red);}
+.mkt-spark{height:36px;width:100%;margin-top:8px;}
+.spark-path{fill:none;stroke-width:1.5;}
+
+/* ─── GOALS ─── */
+.goals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
+.goal-card{background:var(--bg3);border-radius:var(--r);padding:20px;border:1px solid var(--border);transition:border-color .2s;}
+.goal-card:hover{border-color:var(--gold-border);}
+.goal-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.goal-ico{width:44px;height:44px;border-radius:11px;background:var(--gold-bg);border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.goal-name{font-family:'Tajawal';font-weight:800;font-size:.95rem;}
+.goal-sub{font-size:.72rem;color:var(--text2);margin-top:3px;}
+.goal-pct{font-family:'Tajawal';font-weight:900;color:var(--gold);margin-top:8px;font-size:1rem;}
+.goal-months{font-size:.7rem;color:var(--text2);margin-top:4px;}
+
+/* ─── DEBTS ─── */
+.debts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+.debt-card{background:var(--bg3);border-radius:var(--r);padding:20px;border:1px solid var(--orange-border);}
+.debt-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.debt-name{font-family:'Tajawal';font-weight:800;font-size:.95rem;}
+.debt-row{display:flex;justify-content:space-between;font-size:.77rem;padding:5px 0;border-bottom:1px solid var(--border);}
+.debt-row:last-of-type{border:none;}
+.debt-row span:first-child{color:var(--text2);}
+
+/* ─── CALC ─── */
+.calc-box{background:var(--bg3);border-radius:var(--r);padding:20px;border:1px solid var(--border);margin-bottom:16px;}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;}
+.calc-field label{font-size:.72rem;color:var(--text2);display:block;margin-bottom:5px;font-weight:600;}
+.calc-field input{width:100%;}
+.calc-results{background:var(--bg5);border-radius:10px;padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;}
+.cr-lbl{font-size:.68rem;color:var(--text2);}
+.cr-val{font-family:'Tajawal';font-size:1.1rem;font-weight:800;color:var(--gold);}
+
+/* ─── YEAR ─── */
+.year-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px;}
+.mo-card{background:var(--bg3);border-radius:var(--r);padding:16px;border:1px solid var(--border);transition:all .2s;}
+.mo-card:hover{border-color:var(--gold-border);transform:translateY(-1px);}
+.mo-card.cur{border-color:var(--gold);background:var(--gold-bg);}
+.mo-name{font-family:'Tajawal';font-weight:800;font-size:.9rem;color:var(--gold);margin-bottom:10px;}
+.mo-row{display:flex;justify-content:space-between;font-size:.72rem;padding:3px 0;border-bottom:1px solid var(--border);}
+.mo-row:last-child{border:none;}
+.mo-row span:first-child{color:var(--text2);}
+
+/* ─── MODAL ─── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:none;align-items:center;justify-content:center;padding:20px;}
+.overlay.show{display:flex;}
+.modal{background:var(--bg3);border-radius:var(--r-xl);border:1px solid var(--gold-border);padding:26px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.modal h3{font-family:'Tajawal';font-weight:800;font-size:1.1rem;margin-bottom:18px;}
+.modal-fields{display:flex;flex-direction:column;gap:10px;}
+.mf label{font-size:.73rem;color:var(--text2);display:block;margin-bottom:4px;font-weight:600;}
+.mf input,.mf select{width:100%;}
+.modal-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
+
+/* ─── REPORTS ─── */
+.rep-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px;}
+
+/* ─── SETTINGS ─── */
+.set-nav{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:18px;}
+.set-tab{padding:8px 14px;border-radius:9px;background:var(--bg4);border:1px solid var(--border);color:var(--text2);font-family:'Cairo';font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.set-tab.on{background:var(--gold-bg);border-color:var(--gold-border);color:var(--gold);}
+.set-sec{display:none;} .set-sec.on{display:block;}
+.set-group{background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:12px;}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);}
+.set-row:last-child{border:none;}
+.set-row-info h4{font-size:.84rem;font-weight:700;margin-bottom:2px;}
+.set-row-info p{font-size:.72rem;color:var(--text2);}
+.tog{width:40px;height:22px;border-radius:20px;background:var(--bg5);border:1px solid var(--border2);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.tog.on{background:var(--green);border-color:var(--green);}
+.tog::after{content:'';position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;}
+.tog.on::after{transform:translateX(-18px);}
+.audit-log{max-height:280px;overflow-y:auto;}
+.al-item{display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:.76rem;}
+.al-item:last-child{border:none;}
+.al-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px;}
+.al-time{color:var(--text3);font-size:.68rem;flex-shrink:0;}
+.al-msg{flex:1;}
+
+/* ─── SMART TICKER ─── */
+.ticker{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 20px;height:28px;display:flex;align-items:center;overflow:hidden;flex-shrink:0;}
+.ticker-inner{display:flex;gap:28px;animation:tick 30s linear infinite;white-space:nowrap;}
+@keyframes tick{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}.ticker-item{font-size:.7rem;font-weight:700;gap:5px;display:inline-flex;align-items:center;}
+.ticker-item .tn{color:var(--text2);}
+.ticker-item .tv{font-family:'Tajawal';}
+
+/* ─── NOTIF ─── */
+.notif-list{display:flex;flex-direction:column;gap:10px;}
+.notif{background:var(--bg3);border-radius:10px;padding:13px 16px;border:1px solid var(--border);display:flex;gap:12px;font-size:.8rem;}
+.notif.warn{border-color:var(--orange-border);background:var(--orange-bg);}
+.notif.info{border-color:var(--blue-border);}
+.notif.ok{border-color:var(--green-border);}
+.notif-ico{font-size:1.1rem;flex-shrink:0;}
+.notif-body h4{font-weight:700;margin-bottom:3px;}
+.notif-body p{color:var(--text2);font-size:.74rem;}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:960px){.grid2{grid-template-columns:1fr;}.grid3{grid-template-columns:1fr 1fr;}.ai-layout{grid-template-columns:1fr;height:auto;}}
+@media(max-width:640px){.kpis{grid-template-columns:1fr 1fr;}.grid3{grid-template-columns:1fr;}.workspace{padding:14px;}.topbar{padding:0 12px;}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sb">
+  <div class="sb-brand">
+    <div class="brand-mark">📈</div>
+    <div class="brand-text">FinanceOS<small>PRO PLATFORM</small></div>
+  </div>
+  <div class="sb-scroll">
+    <div class="sb-group">
+      <div class="sb-label">الرئيسية</div>
+      <button class="nav-btn active" onclick="go('dash',this)"><span class="ico">📊</span><span>لوحة التحكم</span></button>
+      <button class="nav-btn" onclick="go('summary',this)"><span class="ico">📋</span><span>الملخص المالي</span></button>
+    </div>
+    <div class="sb-group">
+      <div class="sb-label">الإدارة المالية</div>
+      <button class="nav-btn" onclick="go('entry',this)"><span class="ico">✏️</span><span>الإيرادات والمصاريف</span></button>
+      <button class="nav-btn" onclick="go('year',this)"><span class="ico">📅</span><span>التدفقات النقدية</span></button>
+      <button class="nav-btn" onclick="go('reports',this)"><span class="ico">📉</span><span>الأرباح والخسائر</span></button>
+    </div>
+    <div class="sb-group">
+      <div class="sb-label">الديون والالتزامات</div>
+      <button class="nav-btn" onclick="go('debts',this)"><span class="ico">💳</span><span>الديون والأقساط</span></button>
+      <button class="nav-btn" onclick="go('calcs',this)"><span class="ico">🧮</span><span>الحاسبات المالية</span></button>
+    </div>
+    <div class="sb-group">
+      <div class="sb-label">الاستثمارات</div>
+      <button class="nav-btn" onclick="go('markets',this)"><span class="ico">🌍</span><span>الأسواق العالمية</span></button>
+      <button class="nav-btn" onclick="go('goals',this)"><span class="ico">🎯</span><span>الأهداف المالية</span></button>
+    </div>
+    <div class="sb-group">
+      <div class="sb-label">الذكاء الاصطناعي</div>
+      <button class="nav-btn" onclick="go('ai',this)"><span class="ico">🤖</span><span>المستشار المالي الذكي</span></button>
+    </div>
+    <div class="sb-group">
+      <div class="sb-label">النظام</div>
+      <button class="nav-btn" onclick="go('notifs',this)"><span class="ico">🔔</span><span>الإشعارات</span></button>
+      <button class="nav-btn" onclick="go('settings',this)"><span class="ico">⚙️</span><span>الإعدادات</span></button>
+    </div>
+  </div>
+  <div class="sb-bottom">
+    <button class="collapse-btn" onclick="document.getElementById('sb').classList.toggle('sm')"><span>طيّ القائمة</span></button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner" id="ticker"></div>
+  </div>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="page-title" id="pg-title">لوحة التحكم</div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-badge" id="alert-badge" onclick="go('notifs',null)"></div>
+      <select class="cur-sel" id="cur" onchange="setCur()">
+        <option value="د.ب">د.ب</option><option value="ر.س">ر.س</option>
+        <option value="د.إ">د.إ</option><option value="ر.ق">ر.ق</option>
+        <option value="د.ك">د.ك</option><option value="ر.ع">ر.ع</option>
+      </select>
+      <button class="tb-btn" onclick="exportCSV()">📤 CSV</button>
+    </div>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div class="workspace">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div id="dash" class="sheet on">
+      <div class="sh"><div><div class="sh-title">لوحة <em>التحكم</em></div><div class="sh-sub" id="dash-date"></div></div></div>
+      <div class="kpis" id="dash-kpis"></div>
+      <div class="grid2">
+        <div class="panel">
+          <div class="panel-head">📊 تحليل 50/30/20 <span class="badge gold">الشهر الحالي</span></div>
+          <div class="rule"><div class="rule-head"><b>🏠 الضروريات</b><span class="badge" id="st-n">—</span></div><div class="track"><div class="fill fill-blue" id="f-n" style="width:0%"></div></div><div class="rule-foot"><span>الهدف <b id="cfg-n-lbl">50</b>%</span><span id="p-n">0%</span></div></div>
+          <div class="rule"><div class="rule-head"><b>🛍️ الكماليات</b><span class="badge" id="st-w">—</span></div><div class="track"><div class="fill fill-purple" id="f-w" style="width:0%"></div></div><div class="rule-foot"><span>الهدف <b id="cfg-w-lbl">30</b>%</span><span id="p-w">0%</span></div></div>
+          <div class="rule"><div class="rule-head"><b>💰 الادخار</b><span class="badge" id="st-s">—</span></div><div class="track"><div class="fill fill-gold" id="f-s" style="width:0%"></div></div><div class="rule-foot"><span>الهدف <b id="cfg-s-lbl">20</b>%</span><span id="p-s">0%</span></div></div>
+          <div id="smart-tip" style="background:var(--bg5);border-radius:9px;padding:11px 13px;font-size:.77rem;color:var(--text2);margin-top:12px;line-height:1.7;border:1px solid var(--border2);"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">🍩 توزيع المصاريف</div>
+          <div class="donut-row">
+            <svg width="130" height="130" viewBox="0 0 130 130" style="flex-shrink:0">
+              <circle cx="65" cy="65" r="48" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="18"/>
+              <circle id="dn" cx="65" cy="65" r="48" fill="none" stroke="var(--blue)" stroke-width="18" stroke-dasharray="0 302" transform="rotate(-90 65 65)" style="transition:all .8s"/>
+              <circle id="dw" cx="65" cy="65" r="48" fill="none" stroke="var(--purple)" stroke-width="18" stroke-dasharray="0 302" transform="rotate(-90 65 65)" style="transition:all .8s"/>
+              <circle id="ds" cx="65" cy="65" r="48" fill="none" stroke="var(--gold)" stroke-width="18" stroke-dasharray="0 302" transform="rotate(-90 65 65)" style="transition:all .8s"/>
+              <text x="65" y="61" text-anchor="middle" fill="var(--text2)" font-size="8" font-family="Cairo">المصاريف</text>
+              <text id="dc" x="65" y="74" text-anchor="middle" fill="var(--text)" font-size="11" font-weight="bold" font-family="Tajawal">0</text>
+            </svg>
+            <div class="leg">
+              <div class="leg-row"><div class="leg-left"><div class="leg-dot" style="background:var(--blue)"></div>ضروريات</div><b id="ln" class="agold">0</b></div>
+              <div class="leg-row"><div class="leg-left"><div class="leg-dot" style="background:var(--purple)"></div>كماليات</div><b id="lw" class="agold">0</b></div>
+              <div class="leg-row"><div class="leg-left"><div class="leg-dot" style="background:var(--gold)"></div>ادخار</div><b id="ls" class="agold">0</b></div>
+              <div class="leg-row"><div class="leg-left"><div class="leg-dot" style="background:var(--green)"></div>متاح</div><b id="lb" class="apos">0</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">⏰ الدفعات القادمة خلال 30 يوماً <span class="badge orange" id="up-count">0 مستحقة</span></div>
+        <div id="upcoming"></div>
+      </div>
+    </div>
+
+    <!-- ══ SUMMARY ══ -->
+    <div id="summary" class="sheet">
+      <div class="sh"><div><div class="sh-title">الملخص <em>المالي</em></div><div class="sh-sub">نظرة شاملة على وضعك المالي</div></div></div>
+      <div class="kpis" id="sum-kpis"></div>
+      <div class="grid3" id="sum-grid3"></div>
+      <div class="panel" style="margin-bottom:16px">
+        <div class="panel-head">📊 صافي الثروة التراكمي</div>
+        <div id="net-worth-detail" style="font-size:.82rem;line-height:2;color:var(--text2)"></div>
+      </div>
+    </div>
+
+    <!-- ══ ENTRY ══ -->
+    <div id="entry" class="sheet">
+      <div class="sh"><div><div class="sh-title">الإيرادات <em>والمصاريف</em></div><div class="sh-sub">سجّل كل معاملة — يُحدَّث النظام فوراً</div></div></div>
+      <div class="table-box">
+        <div class="table-toolbar">
+          <input type="date" id="i-date" class="f-date">
+          <input type="text" id="i-desc" placeholder="الوصف..." class="f-desc">
+          <input type="number" id="i-amt" placeholder="المبلغ" min="0" step="0.001" class="f-amt">
+          <select id="i-cat" class="f-cat">
+            <option value="income">💚 دخل</option>
+            <option value="needs">🏠 ضروريات</option>
+            <option value="wants">🛍️ كماليات</option>
+            <option value="savings">💰 ادخار</option>
+          </select>
+          <select id="i-month" class="f-month"></select>
+          <button class="btn btn-gold" onclick="addTx()">+ إضافة</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>#</th><th>التاريخ</th><th>الوصف</th><th>الفئة</th><th>الشهر</th><th>المبلغ</th><th></th></tr></thead>
+            <tbody id="tx-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ YEAR ══ -->
+    <div id="year" class="sheet">
+      <div class="sh"><div><div class="sh-title">التدفقات <em>النقدية</em></div><div class="sh-sub">تطورك المالي عبر السنة</div></div></div>
+      <div class="year-grid" id="year-grid"></div>
+      <div id="year-totals" style="margin-top:16px"></div>
+    </div>
+
+    <!-- ══ REPORTS ══ -->
+    <div id="reports" class="sheet">
+      <div class="sh"><div><div class="sh-title">الأرباح <em>والخسائر</em></div><div class="sh-sub">تحليل مالي شامل</div></div>
+        <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="exportCSV()">📊 CSV</button><button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ طباعة</button></div></div>
+      <div class="rep-cards" id="rep-kpis"></div>
+      <div class="panel" style="margin-bottom:16px"><div class="panel-head">📉 تحليل 50/30/20 الكامل</div><div id="rep-5030" style="font-size:.8rem;line-height:2;color:var(--text2)"></div></div>
+      <div class="panel"><div class="panel-head">💡 توصيات مالية ذكية</div><div id="rep-tips" style="font-size:.8rem;line-height:2;color:var(--text2)"></div></div>
+    </div>
+
+    <!-- ══ DEBTS ══ -->
+    <div id="debts" class="sheet">
+      <div class="sh"><div><div class="sh-title">الديون <em>والالتزامات</em></div><div class="sh-sub">إدارة ومتابعة كاملة</div></div>
+        <button class="btn btn-gold btn-sm" onclick="openModal('debt-modal')">+ إضافة دين</button></div>
+      <div class="debts-grid" id="debts-grid"></div>
+    </div>
+
+    <!-- ══ CALCS ══ -->
+    <div id="calcs" class="sheet">
+      <div class="sh"><div><div class="sh-title">الحاسبات <em>المالية</em></div><div class="sh-sub">أدوات حسابية متخصصة</div></div></div>
+      <div class="calc-box">
+        <div class="panel-head" style="margin-bottom:14px">🏦 حاسبة القروض والأقساط</div>
+        <div class="calc-grid">
+          <div class="calc-field"><label>المبلغ الأصلي</label><input type="number" id="c-p" placeholder="10000" oninput="calcLoan()"></div>
+          <div class="calc-field"><label>نسبة الفائدة السنوية %</label><input type="number" id="c-r" placeholder="5" step="0.01" oninput="calcLoan()"></div>
+          <div class="calc-field"><label>المدة (شهر)</label><input type="number" id="c-m" placeholder="36" oninput="calcLoan()"></div>
+        </div>
+        <div class="calc-results">
+          <div><div class="cr-lbl">القسط الشهري</div><div class="cr-val" id="cr-mo">—</div></div>
+          <div><div class="cr-lbl">إجمالي الدفع</div><div class="cr-val" id="cr-tot">—</div></div>
+          <div><div class="cr-lbl">إجمالي الفائدة</div><div class="cr-val" id="cr-int">—</div></div>
+          <div><div class="cr-lbl">نسبة التكلفة</div><div class="cr-val" id="cr-pct">—</div></div>
+        </div>
+      </div>
+      <div class="calc-box">
+        <div class="panel-head" style="margin-bottom:14px">📈 حاسبة ROI والاستثمار</div>
+        <div class="calc-grid">
+          <div class="calc-field"><label>رأس المال</label><input type="number" id="r-cap" placeholder="5000" oninput="calcROI()"></div>
+          <div class="calc-field"><label>العائد السنوي %</label><input type="number" id="r-rate" placeholder="8" oninput="calcROI()"></div>
+          <div class="calc-field"><label>المدة (سنوات)</label><input type="number" id="r-yrs" placeholder="5" oninput="calcROI()"></div>
+        </div>
+        <div class="calc-results">
+          <div><div class="cr-lbl">القيمة النهائية</div><div class="cr-val" id="roi-final">—</div></div>
+          <div><div class="cr-lbl">صافي الربح</div><div class="cr-val" id="roi-profit">—</div></div>
+          <div><div class="cr-lbl">نسبة العائد الكلي</div><div class="cr-val" id="roi-pct">—</div></div>
+          <div><div class="cr-lbl">CAGR</div><div class="cr-val" id="roi-cagr">—</div></div>
+        </div>
+      </div>
+      <div class="calc-box">
+        <div class="panel-head" style="margin-bottom:14px">💰 حاسبة الادخار التراكمي</div>
+        <div class="calc-grid">
+          <div class="calc-field"><label>الادخار الشهري</label><input type="number" id="s-mo" placeholder="300" oninput="calcSavings()"></div>
+          <div class="calc-field"><label>العائد السنوي %</label><input type="number" id="s-rate" placeholder="4" oninput="calcSavings()"></div>
+          <div class="calc-field"><label>المدة (سنوات)</label><input type="number" id="s-yrs" placeholder="10" oninput="calcSavings()"></div>
+        </div>
+        <div class="calc-results">
+          <div><div class="cr-lbl">القيمة المتراكمة</div><div class="cr-val" id="sv-tot">—</div></div>
+          <div><div class="cr-lbl">إجمالي الإيداعات</div><div class="cr-val" id="sv-dep">—</div></div>
+          <div><div class="cr-lbl">الفائدة المكتسبة</div><div class="cr-val" id="sv-int">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MARKETS ══ -->
+    <div id="markets" class="sheet">
+      <div class="sh"><div><div class="sh-title">الأسواق <em>العالمية</em></div><div class="sh-sub">بيانات ومؤشرات مالية عالمية — محاكاة تعليمية</div></div>
+        <button class="btn btn-ghost btn-sm" onclick="refreshMarkets()">🔄 تحديث</button></div>
+      <div class="markets-grid" id="markets-grid"></div>
+      <div class="grid2">
+        <div class="panel"><div class="panel-head">📰 أبرز الأخبار الاقتصادية</div><div id="news-list" style="font-size:.79rem;line-height:1.8;color:var(--text2)"></div></div>
+        <div class="panel"><div class="panel-head">🗓️ التقويم الاقتصادي</div><div id="econ-cal" style="font-size:.79rem;line-height:1.8;color:var(--text2)"></div></div>
+      </div>
+    </div>
+
+    <!-- ══ GOALS ══ -->
+    <div id="goals" class="sheet">
+      <div class="sh"><div><div class="sh-title">الأهداف <em>المالية</em></div><div class="sh-sub">تتبّع تقدّمك نحو أهدافك</div></div>
+        <button class="btn btn-gold btn-sm" onclick="openModal('goal-modal')">+ هدف جديد</button></div>
+      <div class="goals-grid" id="goals-grid"></div>
+    </div>
+
+    <!-- ══ AI ══ -->
+    <div id="ai" class="sheet">
+      <div class="sh"><div><div class="sh-title">المستشار <em>المالي الذكي</em></div><div class="sh-sub">مدعوم بـ Claude AI — تحليل وتوصيات مالية فورية</div></div></div>
+      <div class="ai-layout">
+        <div class="ai-chat">
+          <div class="chat-msgs" id="chat-msgs">
+            <div class="msg ai"><div class="msg-label">🤖 المستشار الذكي</div>مرحباً! أنا مستشارك المالي الذكي. يمكنني تحليل بياناتك المالية وتقديم توصيات مخصصة. كيف يمكنني مساعدتك اليوم؟</div>
+          </div>
+          <div class="chat-input-row">
+            <input type="text" id="ai-input" placeholder="اسألني عن وضعك المالي..." onkeydown="if(event.key==='Enter')sendAI()">
+            <button class="btn btn-gold" onclick="sendAI()">إرسال</button>
+          </div>
+        </div>
+        <div class="ai-panel">
+          <div class="ai-insight">
+            <h4>⚡ أسئلة سريعة</h4>
+            <button class="quick-btn" onclick="quickQ('حلّل وضعي المالي الحالي وأعطني ملخصاً شاملاً')">📊 تحليل وضعي المالي</button>
+            <button class="quick-btn" onclick="quickQ('اقترح لي طرقاً لتحسين نسبة الادخار لديّ')">💰 كيف أزيد مدخراتي؟</button>
+            <button class="quick-btn" onclick="quickQ('هل مستوى ديوني مقبول؟ وكيف أسدّدها بأسرع طريقة؟')">💳 تحليل ديوني</button>
+            <button class="quick-btn" onclick="quickQ('توقّع لي التدفق النقدي الشهري القادم بناءً على بياناتي')">🔮 توقع التدفق النقدي</button>
+            <button class="quick-btn" onclick="quickQ('ما أبرز المخاطر المالية في وضعي الحالي؟')">⚠️ تقييم المخاطر</button>
+          </div>
+          <div class="ai-insight">
+            <h4>📈 مؤشرات سريعة</h4>
+            <div id="ai-quick-stats" style="font-size:.78rem;line-height:1.9;color:var(--text2)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ NOTIFS ══ -->
+    <div id="notifs" class="sheet">
+      <div class="sh"><div><div class="sh-title">مركز <em>الإشعارات</em></div><div class="sh-sub">تنبيهات ذكية لمتابعة وضعك</div></div></div>
+      <div class="notif-list" id="notif-list"></div>
+    </div>
+
+    <!-- ══ SETTINGS ══ -->
+    <div id="settings" class="sheet">
+      <div class="sh"><div><div class="sh-title">لوحة <em>الإعدادات</em></div><div class="sh-sub">تحكّم كامل في النظام</div></div></div>
+      <div class="set-nav">
+        <button class="set-tab on" onclick="setTab('s-gen',this)">عام</button>
+        <button class="set-tab" onclick="setTab('s-fin',this)">مالي</button>
+        <button class="set-tab" onclick="setTab('s-sec',this)">الأمان</button>
+        <button class="set-tab" onclick="setTab('s-notif-s',this)">الإشعارات</button>
+        <button class="set-tab" onclick="setTab('s-data',this)">البيانات</button>
+        <button class="set-tab" onclick="setTab('s-audit',this)">سجل التدقيق</button>
+      </div>
+      <div id="s-gen" class="set-sec on">
+        <div class="set-group">
+          <div class="set-row"><div class="set-row-info"><h4>الوضع الليلي</h4><p>التصميم الداكن الحالي</p></div><div class="tog on"></div></div>
+          <div class="set-row"><div class="set-row-info"><h4>الحفظ التلقائي</h4><p>حفظ البيانات فور الإدخال</p></div><div class="tog on"></div></div>
+          <div class="set-row"><div class="set-row-info"><h4>تنسيق المحاسبة</h4><p>عرض المبالغ بـ 3 منازل عشرية</p></div><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+          <div class="set-row"><div class="set-row-info"><h4>الشريط المتحرك للأسواق</h4><p>عرض مؤشرات الأسواق في الأعلى</p></div><div class="tog on"></div></div>
+        </div>
+      </div>
+      <div id="s-fin" class="set-sec">
+        <div class="set-group">
+          <div class="set-row"><div class="set-row-info"><h4>حد الضروريات %</h4><p>قاعدة 50/30/20</p></div><input type="number" id="cfg-n" value="50" style="width:75px" onchange="saveCfg()"></div>
+          <div class="set-row"><div class="set-row-info"><h4>حد الكماليات %</h4></div><input type="number" id="cfg-w" value="30" style="width:75px" onchange="saveCfg()"></div>
+          <div class="set-row"><div class="set-row-info"><h4>هدف الادخار %</h4></div><input type="number" id="cfg-s" value="20" style="width:75px" onchange="saveCfg()"></div>
+        </div>
+      </div>
+      <div id="s-sec" class="set-sec">
+        <div class="set-group">
+          <div class="set-row"><div class="set-row-info"><h4>تشفير البيانات</h4><p>حماية بيانات التخزين</p></div><div class="tog on"></div></div>
+          <div class="set-row"><div class="set-row-info"><h4>المصادقة الثنائية (2FA)</h4></div><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+          <div class="set-row"><div class="set-row-info"><h4>تسجيل جميع الأنشطة</h4></div><div class="tog on"></div></div>
+          <div class="set-row"><div class="set-row-info"><h4>قفل تلقائي بعد</h4></div><select style="width:90px"><option>5 دقائق</option><option>10 دقائق</option><option>30 دقيقة</option><option>لا</option></select></div>
+        </div>
+      </div>
+      <div id="s-notif-s" class="set-sec">
+        <div class="set-group">
+          <div class="set-row"><div class="set-row-info"><h4>تنبيهات الميزانية</h4><p>عند تجاوز حدود القاعدة</p></div><div class="tog on"></div></div>
+          <div class="set-row"><div class="set-row-info"><h4>تنبيهات الديون</h4><p>قبل 7 أيام من الاستحقاق</p></div><div class="tog on"></div></div>
+          <div class="set-row"><div class="set-row-info"><h4>التقرير الشهري التلقائي</h4></div><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+          <div class="set-row"><div class="set-row-info"><h4>تنبيهات الأسواق</h4></div><div class="tog on"></div></div>
+        </div>
+      </div>
+      <div id="s-data" class="set-sec">
+        <div class="set-group">
+          <div class="set-row"><div class="set-row-info"><h4>تصدير جميع البيانات</h4></div><button class="btn btn-ghost btn-sm" onclick="exportCSV()">تصدير CSV</button></div>
+          <div class="set-row"><div class="set-row-info"><h4>مسح المعاملات</h4><p>⚠️ لا يمكن التراجع</p></div><button class="btn btn-danger btn-sm" onclick="clearTx()">مسح</button></div>
+          <div class="set-row"><div class="set-row-info"><h4>إعادة ضبط كامل</h4></div><button class="btn btn-danger btn-sm" onclick="fullReset()">إعادة ضبط</button></div>
+        </div>
+      </div>
+      <div id="s-audit" class="set-sec">
+        <div class="set-group">
+          <div class="panel-head" style="padding:14px 16px 0">سجل التدقيق الكامل</div>
+          <div class="audit-log" id="audit-log"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /workspace -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODALS -->
+<div class="overlay" id="goal-modal">
+  <div class="modal">
+    <h3>🎯 هدف مالي جديد</h3>
+    <div class="modal-fields">
+      <div class="mf"><label>اسم الهدف</label><input type="text" id="gm-name" placeholder="مثال: صندوق الطوارئ"></div>
+      <div class="mf"><label>الأيقونة (إيموجي)</label><input type="text" id="gm-ico" placeholder="🏠" maxlength="4"></div>
+      <div class="mf"><label>المستهدف</label><input type="number" id="gm-target" placeholder="5000"></div>
+      <div class="mf"><label>الحالي</label><input type="number" id="gm-cur" placeholder="0"></div>
+      <div class="mf"><label>المساهمة الشهرية</label><input type="number" id="gm-mo" placeholder="200"></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('goal-modal')">إلغاء</button><button class="btn btn-gold" onclick="saveGoal()">حفظ</button></div>
+  </div>
+</div>
+<div class="overlay" id="debt-modal">
+  <div class="modal">
+    <h3>💳 إضافة دين / التزام</h3>
+    <div class="modal-fields">
+      <div class="mf"><label>الاسم</label><input type="text" id="dm-name" placeholder="قرض السيارة"></div>
+      <div class="mf"><label>النوع</label><select id="dm-type"><option>قرض بنكي</option><option>بطاقة ائتمان</option><option>تقسيط</option><option>دين شخصي</option><option>إيجار</option></select></div>
+      <div class="mf"><label>المبلغ الإجمالي</label><input type="number" id="dm-tot" placeholder="10000"></div>
+      <div class="mf"><label>المتبقي</label><input type="number" id="dm-rem" placeholder="7500"></div>
+      <div class="mf"><label>القسط الشهري</label><input type="number" id="dm-mo" placeholder="350"></div>
+      <div class="mf"><label>تاريخ الاستحقاق القادم</label><input type="date" id="dm-due"></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('debt-modal')">إلغاء</button><button class="btn btn-gold" onclick="saveDebt()">حفظ</button></div>
+  </div>
+</div>
+
+<script>
+const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const CAT_LABEL={income:'دخل',needs:'ضروريات',wants:'كماليات',savings:'ادخار'};
+const PAGE_TITLES={dash:'لوحة التحكم',summary:'الملخص المالي',entry:'الإيرادات والمصاريف',year:'التدفقات النقدية',reports:'الأرباح والخسائر',debts:'الديون والالتزامات',calcs:'الحاسبات المالية',markets:'الأسواق العالمية',goals:'الأهداف المالية',ai:'المستشار المالي الذكي',notifs:'الإشعارات',settings:'الإعدادات'};
+
+let CUR='د.ب', CFG={n:50,w:30,s:20};
+let txs=[], goals=[], debts=[], auditLog=[];
+
+/* ── HELPERS ── */
+function f(n){if(isNaN(n))return'0 '+CUR;return (+n.toFixed(3)).toLocaleString('en-US',{maximumFractionDigits:3})+' '+CUR;}
+function fv(n){return (+n.toFixed(3)).toLocaleString('en-US',{maximumFractionDigits:3});}
+function sum(cat,mo=null){return txs.filter(t=>t.cat===cat&&(mo===null||t.month==mo)).reduce((s,t)=>s+t.amount,0);}
+function today(){return new Date().toISOString().slice(0,10);}
+function audit(msg){const t=new Date().toLocaleString('ar-BH');auditLog.unshift({t,msg});if(auditLog.length>100)auditLog.pop();renderAudit();}
+
+/* ── NAV ── */
+function go(id,btn){
+  document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('on');
+  if(btn)btn.classList.add('active');
+  document.getElementById('pg-title').textContent=PAGE_TITLES[id]||'';
+  if(id==='markets')renderMarkets();
+  if(id==='reports')renderReports();
+  if(id==='notifs')renderNotifs();
+  if(id==='summary')renderSummary();
+  if(id==='ai')renderAIStats();
+}
+function setTab(id,btn){document.querySelectorAll('.set-sec').forEach(s=>s.classList.remove('on'));document.querySelectorAll('.set-tab').forEach(b=>b.classList.remove('on'));document.getElementById(id).classList.add('on');btn.classList.add('on');}
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+function setCur(){CUR=document.getElementById('cur').value;render();audit('تغيير العملة: '+CUR);}
+function saveCfg(){CFG.n=+document.getElementById('cfg-n').value||50;CFG.w=+document.getElementById('cfg-w').value||30;CFG.s=+document.getElementById('cfg-s').value||20;document.getElementById('cfg-n-lbl').textContent=CFG.n;document.getElementById('cfg-w-lbl').textContent=CFG.w;document.getElementById('cfg-s-lbl').textContent=CFG.s;render();audit('تعديل إعدادات 50/30/20');}
+
+/* ── TRANSACTIONS ── */
+function addTx(){
+  const desc=document.getElementById('i-desc').value.trim(),amount=parseFloat(document.getElementById('i-amt').value);
+  if(!desc||!amount||amount<=0)return;
+  txs.push({id:Date.now(),date:document.getElementById('i-date').value||today(),desc,amount,cat:document.getElementById('i-cat').value,month:+document.getElementById('i-month').value});
+  document.getElementById('i-desc').value='';document.getElementById('i-amt').value='';
+  audit('إضافة معاملة: '+desc+' '+f(amount));render();
+}
+function delTx(id){const t=txs.find(x=>x.id===id);txs=txs.filter(x=>x.id!==id);if(t)audit('حذف: '+t.desc);render();}
+
+/* ── GOALS ── */
+function saveGoal(){const name=document.getElementById('gm-name').value.trim(),target=+document.getElementById('gm-target').value;if(!name||!target)return;goals.push({id:Date.now(),ico:document.getElementById('gm-ico').value||'🎯',name,target,cur:+document.getElementById('gm-cur').value||0,mo:+document.getElementById('gm-mo').value||0});closeModal('goal-modal');['gm-name','gm-ico','gm-target','gm-cur','gm-mo'].forEach(i=>document.getElementById(i).value='');audit('هدف جديد: '+name);render();}
+function delGoal(id){goals=goals.filter(g=>g.id!==id);render();}
+function addToGoal(id){const v=+prompt('المبلغ المضاف:');if(!v||isNaN(v))return;const g=goals.find(x=>x.id===id);if(g){g.cur=Math.min(g.target,g.cur+v);audit('إضافة '+f(v)+' لـ '+g.name);render();}}
+
+/* ── DEBTS ── */
+function saveDebt(){const name=document.getElementById('dm-name').value.trim(),tot=+document.getElementById('dm-tot').value||0;if(!name)return;debts.push({id:Date.now(),name,type:document.getElementById('dm-type').value,tot,rem:+document.getElementById('dm-rem').value||tot,mo:+document.getElementById('dm-mo').value||0,due:document.getElementById('dm-due').value});closeModal('debt-modal');['dm-name','dm-tot','dm-rem','dm-mo','dm-due'].forEach(i=>document.getElementById(i).value='');audit('دين جديد: '+name);render();}
+function delDebt(id){debts=debts.filter(d=>d.id!==id);render();}
+
+/* ── CALCS ── */
+function calcLoan(){const P=+document.getElementById('c-p').value||0,r=(+document.getElementById('c-r').value||0)/100/12,n=+document.getElementById('c-m').value||0;if(!P||!n){['cr-mo','cr-tot','cr-int','cr-pct'].forEach(i=>document.getElementById(i).textContent='—');return;}const mo=r?P*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1):P/n,tot=mo*n,int=tot-P;document.getElementById('cr-mo').textContent=f(mo);document.getElementById('cr-tot').textContent=f(tot);document.getElementById('cr-int').textContent=f(int);document.getElementById('cr-pct').textContent=((int/P)*100).toFixed(2)+'%';}
+function calcROI(){const cap=+document.getElementById('r-cap').value||0,rate=(+document.getElementById('r-rate').value||0)/100,yrs=+document.getElementById('r-yrs').value||0;if(!cap||!yrs){['roi-final','roi-profit','roi-pct','roi-cagr'].forEach(i=>document.getElementById(i).textContent='—');return;}const final=cap*Math.pow(1+rate,yrs),profit=final-cap,pct=((profit/cap)*100),cagr=((Math.pow(final/cap,1/yrs)-1)*100);document.getElementById('roi-final').textContent=f(final);document.getElementById('roi-profit').textContent=f(profit);document.getElementById('roi-pct').textContent=pct.toFixed(2)+'%';document.getElementById('roi-cagr').textContent=cagr.toFixed(2)+'%';}
+function calcSavings(){const mo=+document.getElementById('s-mo').value||0,rate=(+document.getElementById('s-rate').value||0)/100/12,yrs=+document.getElementById('s-yrs').value||0;if(!mo||!yrs){['sv-tot','sv-dep','sv-int'].forEach(i=>document.getElementById(i).textContent='—');return;}const n=yrs*12,tot=rate?mo*(Math.pow(1+rate,n)-1)/rate:mo*n,dep=mo*n,int=tot-dep;document.getElementById('sv-tot').textContent=f(tot);document.getElementById('sv-dep').textContent=f(dep);document.getElementById('sv-int').textContent=f(int);}
+
+/* ── DATA MANAGEMENT ── */
+function clearTx(){if(confirm('مسح جميع المعاملات؟')){txs=[];audit('مسح المعاملات');render();}}
+function fullReset(){if(confirm('إعادة ضبط كامل؟ لا يمكن التراجع.')){txs=[];goals=[];debts=[];audit('إعادة ضبط كامل');render();}}
+function exportCSV(){let c='التاريخ,الوصف,الفئة,الشهر,المبلغ\n';txs.forEach(t=>{c+=`${t.date},"${t.desc}",${CAT_LABEL[t.cat]},${MONTHS[t.month]},${t.amount}\n`;});const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(c);a.download='finance-data.csv';a.click();audit('تصدير CSV');}
+
+/* ── MARKETS DATA ── */
+const MKT_DATA=[
+  {n:'S&P 500',v:5123.45,chg:+0.82,cat:'index'},
+  {n:'داو جونز',v:38741.2,chg:-0.31,cat:'index'},
+  {n:'نازداك',v:16245.8,chg:+1.24,cat:'index'},
+  {n:'ذهب أوقية',v:2387.5,chg:+0.44,cat:'metal'},
+  {n:'فضة أوقية',v:29.82,chg:-0.61,cat:'metal'},
+  {n:'نفط برنت',v:81.3,chg:+1.15,cat:'energy'},
+  {n:'بيتكوين USD',v:67420,chg:+2.87,cat:'crypto'},
+  {n:'إيثيريوم',v:3541,chg:+1.93,cat:'crypto'},
+  {n:'EUR/USD',v:1.0845,chg:+0.12,cat:'fx'},
+  {n:'GBP/USD',v:1.2712,chg:-0.08,cat:'fx'},
+  {n:'USD/BHD',v:0.3770,chg:0,cat:'fx'},
+  {n:'تداول (TASI)',v:11842,chg:+0.63,cat:'index'},
+];
+
+function refreshMarkets(){MKT_DATA.forEach(m=>{m.chg+=(Math.random()-.5)*.3;m.v*=(1+m.chg/10000);});renderMarkets();}
+function renderMarkets(){
+  document.getElementById('markets-grid').innerHTML=MKT_DATA.map(m=>{
+    const up=m.chg>=0,sign=up?'+':'';
+    const pts=Array.from({length:8},(_,i)=>50+Math.sin(i*.8+Math.random()*.5)*18);
+    const path=pts.map((y,i)=>`${i===0?'M':'L'}${i*26+5},${90-y}`).join(' ');
+    return `<div class="mkt-card"><div class="mkt-name">${m.n}</div>
+      <div class="mkt-val ${up?'apos':'aneg'}" style="color:${up?'var(--green)':'var(--red)'}">${m.v<10?m.v.toFixed(4):m.v>1000?m.v.toFixed(0):m.v.toFixed(2)}</div>
+      <div class="mkt-chg ${up?'up':'dn'}">${sign}${m.chg.toFixed(2)}%</div>
+      <svg class="mkt-spark" viewBox="0 0 200 90"><path class="spark-path" d="${path}" stroke="${up?'var(--green)':'var(--red)'}" opacity=".6"/></svg></div>`;
+  }).join('');
+  document.getElementById('news-list').innerHTML=[
+    '📌 البنك المركزي الأمريكي يُبقي الفائدة دون تغيير في اجتماع يونيو',
+    '📌 أسعار النفط ترتفع بعد قرار أوبك+ خفض الإنتاج',
+    '📌 الذهب يتجاوز 2400 دولار للمرة الأولى منذ أشهر',
+    '📌 البيتكوين يتجاوز 67 ألف دولار مع تزايد الطلب المؤسسي',
+    '📌 البورصة السعودية تسجل مكاسب أسبوعية بدعم من قطاع الطاقة',
+  ].map(n=>`<div style="padding:7px 0;border-bottom:1px solid var(--border);">${n}</div>`).join('');
+  document.getElementById('econ-cal').innerHTML=[
+    {d:'12 يونيو',e:'بيانات التضخم الأمريكي (CPI)',imp:'🔴'},
+    {d:'18 يونيو',e:'اجتماع الاحتياطي الفيدرالي',imp:'🔴'},
+    {d:'20 يونيو',e:'مبيعات التجزئة الأمريكية',imp:'🟡'},
+    {d:'25 يونيو',e:'ناتج محلي إجمالي UK',imp:'🟡'},
+    {d:'30 يونيو',e:'نهاية الربع الثاني',imp:'🟢'},
+  ].map(e=>`<div style="padding:7px 0;border-bottom:1px solid var(--border);display:flex;gap:8px"><span style="color:var(--text3);min-width:60px;">${e.d}</span>${e.imp} ${e.e}</div>`).join('');
+  renderTicker();
+}
+
+/* ── TICKER ── */
+function renderTicker(){
+  const items=MKT_DATA.slice(0,8).map(m=>{const up=m.chg>=0;return `<span class="ticker-item"><span class="tn">${m.n}</span><span class="tv" style="color:${up?'var(--green)':'var(--red)'}">${m.v>100?m.v.toFixed(0):m.v.toFixed(4)} ${up?'▲':'▼'} ${Math.abs(m.chg).toFixed(2)}%</span></span>`;}).join('');
+  document.getElementById('ticker').innerHTML='<div class="ticker-inner">'+items+items+'</div>';
+}
+
+/* ── AI CHAT ── */
+let chatHistory=[];
+async function sendAI(){
+  const inp=document.getElementById('ai-input');const q=inp.value.trim();if(!q)return;
+  inp.value='';
+  addMsg(q,'user');
+  const mo=new Date().getMonth();
+  const inc=sum('income',mo),ne=sum('needs',mo),wa=sum('wants',mo),sa=sum('savings',mo);
+  const totalDebt=debts.reduce((s,d)=>s+d.rem,0);
+  const ctx=`بيانات الشهر الحالي (${MONTHS[mo]}): الدخل=${f(inc)}, الضروريات=${f(ne)}, الكماليات=${f(wa)}, الادخار=${f(sa)}, الرصيد المتاح=${f(Math.max(0,inc-ne-wa-sa))}, إجمالي الديون=${f(totalDebt)}, عدد الأهداف=${goals.length}. العملة: ${CUR}.`;
+  const loadId='load-'+Date.now();
+  const msgsEl=document.getElementById('chat-msgs');
+  const loadDiv=document.createElement('div');loadDiv.className='msg ai';loadDiv.id=loadId;loadDiv.innerHTML='<div class="msg-label">🤖 المستشار الذكي</div><div class="loading-dots"><span></span><span></span><span></span></div>';
+  msgsEl.appendChild(loadDiv);msgsEl.scrollTop=msgsEl.scrollHeight;
+  chatHistory.push({role:'user',content:q});
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'أنت مستشار مالي ذكي ومتخصص في الأسواق الخليجية والمالية الشخصية. ردودك باللغة العربية، موجزة وعملية ومباشرة. استخدم البيانات المالية المقدمة لتقديم توصيات دقيقة ومخصصة. السياق المالي: '+ctx,messages:chatHistory})});
+    const d=await res.json();
+    const reply=d.content?.find(c=>c.type==='text')?.text||'حدث خطأ في الاتصال.';
+    chatHistory.push({role:'assistant',content:reply});
+    const el=document.getElementById(loadId);if(el)el.innerHTML='<div class="msg-label">🤖 المستشار الذكي</div>'+reply;
+  }catch(e){const el=document.getElementById(loadId);if(el)el.innerHTML='<div class="msg-label">🤖</div>حدث خطأ، تحقق من الاتصال.';}
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+}
+function quickQ(q){document.getElementById('ai-input').value=q;sendAI();}
+function addMsg(txt,role){const el=document.getElementById('chat-msgs');const d=document.createElement('div');d.className='msg '+role;d.innerHTML=(role==='ai'?'<div class="msg-label">🤖 المستشار الذكي</div>':'')+txt;el.appendChild(d);el.scrollTop=el.scrollHeight;}
+function renderAIStats(){const mo=new Date().getMonth();const inc=sum('income',mo),exp=sum('needs',mo)+sum('wants',mo),sa=sum('savings',mo);const savRate=inc>0?((sa/inc)*100).toFixed(1):0;document.getElementById('ai-quick-stats').innerHTML=`💚 الدخل: <b>${f(inc)}</b><br>❤️ المصاريف: <b>${f(exp)}</b><br>💰 معدل الادخار: <b>${savRate}%</b><br>💳 إجمالي الديون: <b>${f(debts.reduce((s,d)=>s+d.rem,0))}</b><br>🎯 الأهداف النشطة: <b>${goals.length}</b>`;}
+
+/* ── MASTER RENDER ── */
+function render(){renderDash();renderEntry();renderYear();renderGoals();renderDebts();renderNotifs();renderAlertBadge();}
+
+/* ── DASHBOARD ── */
+function renderDash(){
+  const now=new Date(),mo=now.getMonth();
+  document.getElementById('dash-date').textContent=now.toLocaleDateString('ar-BH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const inc=sum('income',mo),ne=sum('needs',mo),wa=sum('wants',mo),sa=sum('savings',mo),exp=ne+wa;
+  const bal=inc-exp-sa,base=inc||1;
+  const pn=Math.round(ne/base*100),pw=Math.round(wa/base*100),ps=Math.round(sa/base*100);
+  const totalDebt=debts.reduce((s,d)=>s+d.rem,0),moDebt=debts.reduce((s,d)=>s+d.mo,0);
+  document.getElementById('dash-kpis').innerHTML=`
+    <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-label">💚 الدخل الشهري</div><div class="kpi-val">${f(inc)}</div><div class="kpi-sub" style="color:var(--text2)">${MONTHS[mo]}</div></div>
+    <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-label">❤️ المصاريف</div><div class="kpi-val">${f(exp)}</div><div class="kpi-sub" style="color:var(--text2)">ضروريات + كماليات</div></div>
+    <div class="kpi au"><div class="kpi-glow"></div><div class="kpi-label">💰 الادخار</div><div class="kpi-val">${f(sa)}</div><div class="kpi-sub" style="color:var(--text2)">${ps}% من الدخل</div></div>
+    <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-label">💙 الرصيد المتاح</div><div class="kpi-val">${f(Math.max(0,bal))}</div><div class="kpi-sub" style="color:${bal>=0?'var(--green)':'var(--red)'}">${bal>=0?'✅ إيجابي':'⚠️ عجز'}</div></div>
+    <div class="kpi o"><div class="kpi-glow"></div><div class="kpi-label">🔶 إجمالي الديون</div><div class="kpi-val">${f(totalDebt)}</div><div class="kpi-sub" style="color:var(--text2)">${debts.length} التزامات</div></div>`;
+  document.getElementById('f-n').style.width=Math.min(100,pn)+'%';
+  document.getElementById('f-w').style.width=Math.min(100,pw)+'%';
+  document.getElementById('f-s').style.width=Math.min(100,ps)+'%';
+  document.getElementById('p-n').textContent=pn+'%';document.getElementById('p-w').textContent=pw+'%';document.getElementById('p-s').textContent=ps+'%';
+  function st(el,v,t,hi){const e=document.getElementById(el);if(hi){e.className='badge '+(v>=t?'green':'orange');e.textContent=v>=t?'ممتاز ✓':'أقل من الهدف';}else{e.className='badge '+(v<=t?'green':v<=t*1.1?'orange':'red');e.textContent=v<=t?'ضمن الحد ✓':v<=t*1.1?'قريب من الحد':'تجاوز الحد ✗';}}
+  st('st-n',pn,CFG.n,false);st('st-w',pw,CFG.w,false);st('st-s',ps,CFG.s,true);
+  const C=2*Math.PI*48;const sN=inc>0?(ne/inc)*C:0,sW=inc>0?(wa/inc)*C:0,sS=inc>0?(sa/inc)*C:0;
+  document.getElementById('dn').setAttribute('stroke-dasharray',sN+' '+(C-sN));
+  document.getElementById('dw').setAttribute('stroke-dasharray',sW+' '+(C-sW));document.getElementById('dw').setAttribute('stroke-dashoffset',-sN);
+  document.getElementById('ds').setAttribute('stroke-dasharray',sS+' '+(C-sS));document.getElementById('ds').setAttribute('stroke-dashoffset',-(sN+sW));
+  document.getElementById('dc').textContent=inc>0?fv(exp):0;
+  document.getElementById('ln').textContent=f(ne);document.getElementById('lw').textContent=f(wa);document.getElementById('ls').textContent=f(sa);document.getElementById('lb').textContent=f(Math.max(0,bal));
+  let tip='';
+  if(inc===0)tip='💡 أضف معاملاتك لبدء التحليل الذكي.';
+  else if(pn>CFG.n)tip=`⚠️ ضرورياتك (${pn}%) تجاوزت الحد (${CFG.n}%). راجع الفواتير والنفقات الثابتة.`;
+  else if(pw>CFG.w)tip=`🛍️ كمالياتك (${pw}%) تجاوزت الحد (${CFG.w}%). قلّص نفقات الترفيه.`;
+  else if(ps<CFG.s)tip=`💰 ادخارك (${ps}%) أقل من الهدف (${CFG.s}%). حوّل ${CFG.s}% تلقائياً عند استلام الراتب.`;
+  else tip=`✅ أداء ممتاز! تطبّق قاعدة ${CFG.n}/${CFG.w}/${CFG.s} بنجاح هذا الشهر.`;
+  document.getElementById('smart-tip').textContent=tip;
+  const now2=new Date(),in30=new Date();in30.setDate(in30.getDate()+30);
+  const up=debts.filter(d=>{if(!d.due)return false;const dt=new Date(d.due);return dt>=now2&&dt<=in30;}).sort((a,b)=>new Date(a.due)-new Date(b.due));
+  document.getElementById('up-count').textContent=up.length+' مستحقة';
+  document.getElementById('upcoming').innerHTML=up.length?up.map(d=>`<div class="notif warn" style="margin-bottom:8px"><div class="notif-ico">⏰</div><div class="notif-body"><h4>${d.name}</h4><p>يستحق: ${d.due} — القسط: ${f(d.mo)}</p></div></div>`).join(''):'<p style="color:var(--text3);font-size:.8rem;padding:10px">✅ لا توجد دفعات مستحقة خلال 30 يوماً</p>';
+}
+
+/* ── SUMMARY ── */
+function renderSummary(){
+  const allInc=sum('income'),allExp=sum('needs')+sum('wants'),allSav=sum('savings');
+  const netWorth=allInc-allExp-allSav,totalDebt=debts.reduce((s,d)=>s+d.rem,0);
+  document.getElementById('sum-kpis').innerHTML=`
+    <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-label">💚 إجمالي الدخل</div><div class="kpi-val">${f(allInc)}</div></div>
+    <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-label">❤️ إجمالي المصاريف</div><div class="kpi-val">${f(allExp)}</div></div>
+    <div class="kpi au"><div class="kpi-glow"></div><div class="kpi-label">💰 إجمالي الادخار</div><div class="kpi-val">${f(allSav)}</div></div>
+    <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-label">💙 صافي الرصيد</div><div class="kpi-val">${f(Math.max(0,netWorth))}</div></div>
+    <div class="kpi o"><div class="kpi-glow"></div><div class="kpi-label">🔶 إجمالي الديون</div><div class="kpi-val">${f(totalDebt)}</div></div>`;
+  const goalTot=goals.reduce((s,g)=>s+g.target,0),goalCur=goals.reduce((s,g)=>s+g.cur,0);
+  document.getElementById('sum-grid3').innerHTML=`
+    <div class="panel"><div class="panel-head">🎯 الأهداف</div><div style="font-size:.8rem;line-height:2">عدد الأهداف: <b>${goals.length}</b><br>مُجمَّع: <b class="agold">${f(goalCur)}</b><br>المستهدف: <b>${f(goalTot)}</b></div></div>
+    <div class="panel"><div class="panel-head">💳 الديون</div><div style="font-size:.8rem;line-height:2">عدد الالتزامات: <b>${debts.length}</b><br>إجمالي المتبقي: <b class="aneg">${f(totalDebt)}</b><br>أقساط شهرية: <b>${f(debts.reduce((s,d)=>s+d.mo,0))}</b></div></div>
+    <div class="panel"><div class="panel-head">📊 المعاملات</div><div style="font-size:.8rem;line-height:2">إجمالي: <b>${txs.length}</b><br>دخل: <b>${txs.filter(t=>t.cat==='income').length}</b><br>مصاريف: <b>${txs.filter(t=>t.cat!=='income').length}</b></div></div>`;
+  document.getElementById('net-worth-detail').innerHTML=`
+    💚 إجمالي الدخل المسجّل: <b>${f(allInc)}</b><br>
+    ❤️ إجمالي المصاريف: <b>${f(allExp)}</b><br>
+    💰 إجمالي الادخار: <b>${f(allSav)}</b><br>
+    🔶 إجمالي الديون المتبقية: <b>${f(totalDebt)}</b><br>
+    <br>📈 صافي الثروة (الدخل - المصاريف - الادخار): <b class="${netWorth>=0?'apos':'aneg'}">${f(netWorth)}</b>`;
+}
+
+/* ── ENTRY ── */
+function renderEntry(){
+  const tb=document.getElementById('tx-body');
+  if(!txs.length){tb.innerHTML='<tr><td colspan="7" class="empty-td">📝 لا توجد معاملات — أضف أول معاملة</td></tr>';return;}
+  tb.innerHTML=[...txs].reverse().map((t,i)=>`<tr><td style="color:var(--text3);font-size:.7rem">${txs.length-i}</td><td>${t.date}</td><td>${t.desc}</td><td><span class="pill ${t.cat}">${CAT_LABEL[t.cat]}</span></td><td style="color:var(--text2);font-size:.75rem">${MONTHS[t.month]}</td><td class="${t.cat==='income'?'apos':'aneg'}">${t.cat==='income'?'+':'−'}${f(t.amount)}</td><td><button class="del-btn" onclick="delTx(${t.id})">✕</button></td></tr>`).join('');
+}
+
+/* ── YEAR ── */
+function renderYear(){
+  const now=new Date();
+  document.getElementById('year-grid').innerHTML=MONTHS.map((m,i)=>{
+    const inc=sum('income',i),ne=sum('needs',i),wa=sum('wants',i),sa=sum('savings',i),has=txs.some(t=>t.month==i);
+    return `<div class="mo-card ${i===now.getMonth()?'cur':''}"><div class="mo-name">${m}${i===now.getMonth()?' ◉':''}</div>
+      <div class="mo-row"><span>دخل</span><b style="color:var(--green)">${has?f(inc):'—'}</b></div>
+      <div class="mo-row"><span>مصاريف</span><b style="color:var(--red)">${has?f(ne+wa):'—'}</b></div>
+      <div class="mo-row"><span>ادخار</span><b style="color:var(--gold)">${has?f(sa):'—'}</b></div>
+      <div class="mo-row"><span>متاح</span><b style="color:var(--blue)">${has?f(Math.max(0,inc-ne-wa-sa)):'—'}</b></div></div>`;
+  }).join('');
+  let yi=0,ye=0,ys=0;
+  for(let i=0;i<12;i++){yi+=sum('income',i);ye+=sum('needs',i)+sum('wants',i);ys+=sum('savings',i);}
+  document.getElementById('year-totals').innerHTML=`<div class="panel"><div class="panel-head">📊 الملخص السنوي الكامل</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px"><div><div class="cr-lbl">إجمالي الدخل</div><div class="cr-val" style="color:var(--green)">${f(yi)}</div></div><div><div class="cr-lbl">إجمالي المصاريف</div><div class="cr-val" style="color:var(--red)">${f(ye)}</div></div><div><div class="cr-lbl">إجمالي الادخار</div><div class="cr-val">${f(ys)}</div></div><div><div class="cr-lbl">صافي السنة</div><div class="cr-val" style="color:var(--blue)">${f(yi-ye-ys)}</div></div></div></div>`;
+}
+
+/* ── GOALS ── */
+function renderGoals(){
+  const g=document.getElementById('goals-grid');
+  if(!goals.length){g.innerHTML='<div style="text-align:center;padding:50px;color:var(--text3)">🎯 أضف هدفك المالي الأول</div>';return;}
+  g.innerHTML=goals.map(goal=>{
+    const pct=Math.min(100,Math.round(goal.cur/goal.target*100)),rem=goal.target-goal.cur,mos=goal.mo>0?Math.ceil(rem/goal.mo):null;
+    return `<div class="goal-card"><div class="goal-head"><div class="goal-ico">${goal.ico}</div><div><div class="goal-name">${goal.name}</div><div class="goal-sub">${f(goal.cur)} من ${f(goal.target)}</div></div><button class="del-btn" onclick="delGoal(${goal.id})">✕</button></div>
+      <div class="track" style="height:8px;margin:8px 0"><div class="fill fill-gold" style="width:${pct}%"></div></div>
+      <div class="goal-pct">${pct}%</div>
+      <div class="goal-months">${mos?`~${mos} شهر للإنجاز${goal.mo>0?' ('+f(goal.mo)+' شهرياً)':''}`:'أضف مساهمة شهرية لحساب المدة'}</div>
+      <div style="margin-top:10px"><button class="btn btn-ghost btn-sm" onclick="addToGoal(${goal.id})">+ إضافة مبلغ</button></div></div>`;
+  }).join('');
+}
+
+/* ── DEBTS ── */
+function renderDebts(){
+  const g=document.getElementById('debts-grid');
+  if(!debts.length){g.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3);grid-column:1/-1">💳 لا توجد ديون مسجّلة</div>';return;}
+  g.innerHTML=debts.map(d=>{
+    const pct=Math.min(100,Math.round((1-d.rem/d.tot)*100)),mos=d.mo>0?Math.ceil(d.rem/d.mo):null;
+    return `<div class="debt-card"><div class="debt-head"><div><div class="debt-name">${d.name}</div></div><div style="display:flex;gap:8px;align-items:center"><span class="badge orange">${d.type}</span><button class="del-btn" onclick="delDebt(${d.id})">✕</button></div></div>
+      <div class="debt-row"><span>الإجمالي</span><b class="aneg">${f(d.tot)}</b></div>
+      <div class="debt-row"><span>المتبقي</span><b style="color:var(--orange)">${f(d.rem)}</b></div>
+      <div class="debt-row"><span>القسط</span><b>${f(d.mo)}</b></div>
+      ${d.due?`<div class="debt-row"><span>الاستحقاق</span><b>${d.due}</b></div>`:''}
+      ${mos?`<div class="debt-row"><span>أشهر متبقية</span><b>${mos}</b></div>`:''}
+      <div style="margin-top:10px"><div class="track"><div class="fill fill-green" style="width:${pct}%"></div></div><div style="font-size:.68rem;color:var(--text2);margin-top:3px">${pct}% مُسدَّد</div></div></div>`;
+  }).join('');
+}
+
+/* ── REPORTS ── */
+function renderReports(){
+  const allInc=sum('income'),allNe=sum('needs'),allWa=sum('wants'),allSav=sum('savings'),allExp=allNe+allWa;
+  const base=allInc||1,pn=Math.round(allNe/base*100),pw=Math.round(allWa/base*100),ps=Math.round(allSav/base*100);
+  document.getElementById('rep-kpis').innerHTML=`
+    <div class="kpi g"><div class="kpi-label">💚 الدخل الكلي</div><div class="kpi-val">${f(allInc)}</div></div>
+    <div class="kpi r"><div class="kpi-label">❤️ المصاريف الكلية</div><div class="kpi-val">${f(allExp)}</div></div>
+    <div class="kpi au"><div class="kpi-label">💰 الادخار الكلي</div><div class="kpi-val">${f(allSav)}</div></div>
+    <div class="kpi b"><div class="kpi-label">💙 صافي الرصيد</div><div class="kpi-val">${f(Math.max(0,allInc-allExp-allSav))}</div></div>`;
+  document.getElementById('rep-5030').innerHTML=`📊 الضروريات: <b>${pn}%</b> (الهدف: ${CFG.n}%) — ${pn<=CFG.n?'✅ ضمن الحد':'❌ تجاوز الحد'}<br>🛍️ الكماليات: <b>${pw}%</b> (الهدف: ${CFG.w}%) — ${pw<=CFG.w?'✅ ضمن الحد':'❌ تجاوز الحد'}<br>💰 الادخار: <b>${ps}%</b> (الهدف: ${CFG.s}%) — ${ps>=CFG.s?'✅ ممتاز':'⚠️ أقل من الهدف'}`;
+  let tips=[];
+  if(pn>CFG.n)tips.push(`🔍 ضرورياتك ${pn}% تتجاوز الحد ${CFG.n}% — راجع الإيجار والفواتير.`);
+  if(pw>CFG.w)tips.push(`🛍️ كمالياتك ${pw}% تتجاوز الحد ${CFG.w}% — قلّص نفقات الترفيه.`);
+  if(ps<CFG.s)tips.push(`💰 ادخارك ${ps}% أقل من الهدف ${CFG.s}% — حوّل تلقائياً عند الراتب.`);
+  if(debts.length)tips.push(`💳 ${debts.length} التزامات بإجمالي ${f(debts.reduce((s,d)=>s+d.rem,0))} — اعمل على خطة سداد.`);
+  if(!tips.length)tips.push('✅ أداء مالي ممتاز! استمر على هذا المسار.');
+  document.getElementById('rep-tips').innerHTML=tips.join('<br>');
+}
+
+/* ── NOTIFICATIONS ── */
+function renderNotifs(){
+  const mo=new Date().getMonth(),inc=sum('income',mo),ne=sum('needs',mo),wa=sum('wants',mo),sa=sum('savings',mo),base=inc||1;
+  const notifs=[];
+  if(inc>0){
+    if(ne/base*100>CFG.n)notifs.push({t:'warn',ico:'⚠️',h:'تجاوز الحد: الضروريات',b:`تمثّل ${Math.round(ne/base*100)}% من الدخل (الحد: ${CFG.n}%)`});
+    if(wa/base*100>CFG.w)notifs.push({t:'warn',ico:'🛍️',h:'تجاوز الحد: الكماليات',b:`تمثّل ${Math.round(wa/base*100)}% من الدخل (الحد: ${CFG.w}%)`});
+    if(sa/base*100>=CFG.s)notifs.push({t:'ok',ico:'💰',h:'هدف الادخار محقق',b:`ادخرت ${Math.round(sa/base*100)}% هذا الشهر`});
+  }
+  const now=new Date(),in7=new Date();in7.setDate(in7.getDate()+7);
+  debts.forEach(d=>{if(d.due){const dt=new Date(d.due);if(dt>=now&&dt<=in7)notifs.push({t:'warn',ico:'⏰',h:'دفعة مستحقة خلال 7 أيام',b:`${d.name} — ${d.due} — ${f(d.mo)}`});}});
+  goals.forEach(g=>{if(g.cur>=g.target)notifs.push({t:'ok',ico:'🏆',h:'تحقيق هدف',b:`أنجزت هدف "${g.name}" بالكامل!`});});
+  if(!notifs.length)notifs.push({t:'info',ico:'✅',h:'لا توجد تنبيهات نشطة',b:'وضعك المالي تحت المراقبة.'});
+  document.getElementById('notif-list').innerHTML=notifs.map(n=>`<div class="notif ${n.t}"><div class="notif-ico">${n.ico}</div><div class="notif-body"><h4>${n.h}</h4><p>${n.b}</p></div></div>`).join('');
+}
+function renderAlertBadge(){const mo=new Date().getMonth(),inc=sum('income',mo)||1,ne=sum('needs',mo),wa=sum('wants',mo),sa=sum('savings',mo);let c=0;if(ne/inc*100>CFG.n)c++;if(wa/inc*100>CFG.w)c++;if(sa/inc*100<CFG.s&&inc>0)c++;const now=new Date(),in7=new Date();in7.setDate(in7.getDate()+7);debts.forEach(d=>{if(d.due&&new Date(d.due)>=now&&new Date(d.due)<=in7)c++;});const b=document.getElementById('alert-badge');b.textContent=c>0?c+' تنبيهات':'✅ لا تنبيهات';b.style.display='';}
+
+/* ── AUDIT ── */
+function renderAudit(){const el=document.getElementById('audit-log');if(!el)return;el.innerHTML=auditLog.length?auditLog.map(a=>`<div class="al-item"><div class="al-dot"></div><div class="al-msg">${a.msg}</div><div class="al-time">${a.t}</div></div>`).join(''):'<div style="padding:14px;color:var(--text3);text-align:center;font-size:.8rem">لا توجد سجلات</div>';}
+
+/* ── INIT ── */
+const mi=document.getElementById('i-month');MONTHS.forEach((m,i)=>{const o=document.createElement('option');o.value=i;o.textContent=m;mi.appendChild(o);});
+mi.value=new Date().getMonth();
+document.getElementById('i-date').value=today();
+// Sample data
+txs=[
+  {id:1,date:'2026-06-01',desc:'الراتب الشهري',amount:1200,cat:'income',month:5},
+  {id:2,date:'2026-06-02',desc:'الإيجار',amount:300,cat:'needs',month:5},
+  {id:3,date:'2026-06-03',desc:'بقالة وتسوق',amount:120,cat:'needs',month:5},
+  {id:4,date:'2026-06-04',desc:'فاتورة الكهرباء',amount:42,cat:'needs',month:5},
+  {id:5,date:'2026-06-07',desc:'مطعم وترفيه',amount:75,cat:'wants',month:5},
+  {id:6,date:'2026-06-08',desc:'اشتراكات',amount:25,cat:'wants',month:5},
+  {id:7,date:'2026-06-10',desc:'ادخار شهري',amount:200,cat:'savings',month:5},
+  {id:8,date:'2026-05-01',desc:'الراتب — مايو',amount:1200,cat:'income',month:4},
+  {id:9,date:'2026-05-03',desc:'إيجار مايو',amount:300,cat:'needs',month:4},
+  {id:10,date:'2026-05-15',desc:'ادخار مايو',amount:180,cat:'savings',month:4},
+];
+goals=[
+  {id:1,ico:'🛡️',name:'صندوق الطوارئ',target:3000,cur:1200,mo:200},
+  {id:2,ico:'✈️',name:'رحلة سفر',target:1500,cur:450,mo:100},
+  {id:3,ico:'🏠',name:'دفعة أولى شقة',target:10000,cur:2000,mo:300},
+];
+debts=[
+  {id:1,name:'قرض السيارة',type:'قرض بنكي',tot:8000,rem:5500,mo:300,due:'2026-06-25'},
+  {id:2,name:'بطاقة ائتمان',type:'بطاقة ائتمان',tot:1200,rem:800,mo:200,due:'2026-06-30'},
+];
+audit('تسجيل دخول للمنصة');
+render();
+renderMarkets();
+</script>
+</body>
+</html>
